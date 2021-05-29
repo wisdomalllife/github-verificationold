@@ -13,9 +13,16 @@ import java.util.stream.Collectors;
 
 public class GitHubClientController extends AbstractRestController {
     //сосздает объект клиента и устанавливает связи
-    @Autowired
-    private GitHubClient githubService;
+
+    private final GitHubClient githubService;
     //то, по какой ссылке работает клиент(вызов методов)
+    private final DatabaseService databaseService;
+
+    public GitHubClientController(GitHubClient githubService, DatabaseService databaseService) {
+        this.githubService = githubService;
+        this.databaseService = databaseService;
+    }
+
     @GetMapping("/repos/{owner}/{repo}/pulls")
     public List<Pull> getPulls(
             @PathVariable("owner") String owner,
@@ -73,5 +80,10 @@ public class GitHubClientController extends AbstractRestController {
         issueComment.setBody(messageBody);
 
         return githubService.createPullIssue(issueComment, owner, repoName, number);
+    }
+
+    @GetMapping("/users")
+    public List<String> getUsers() {
+        return databaseService.getUser();
     }
 }
